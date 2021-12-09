@@ -1,15 +1,5 @@
 import { Injectable } from '@angular/core';
-
-// TypeScript type names
-export interface StoredProcedureDataType {
-  number: string
-  numberBig: string
-  boolean: string
-  string: string
-  decimal: string
-  date: string
-  any: string
-}
+import { StoredProcedureDataType } from '../models/object.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,10 +25,22 @@ export class StoreProcedureTypeService {
       any: 'any',
       boolean: 'boolean',
       date: 'Date',
-      decimal: 'decimal',
+      decimal: 'number',
       number: 'number',
       numberBig: 'number',
       string: 'string'
+    })
+  }
+
+  getSwiftDataType(value: string): string {
+    return this.matchSqlDataType(value, {
+      any: 'Any',
+      boolean: 'Bool',
+      date: 'Date',
+      decimal: 'Decimal',
+      number: 'Int',
+      numberBig: 'Int',
+      string: 'String'
     })
   }
 

@@ -1,18 +1,5 @@
 import { Injectable } from '@angular/core';
-
-// TypeScript type names
-export interface ResultDataType {
-  number: string
-  numberNull: string,
-  boolean: string
-  booleanNull: string
-  string: string
-  decimal: string
-  decimalNull: string
-  date: string
-  dateNull: string
-  any: string
-}
+import { ResultDataType } from '../models/object.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,25 +30,42 @@ export class ResultTypeService {
       booleanNull: 'boolean | null',
       date: 'Date',
       dateNull: 'Date | null',
-      decimal: 'decimal',
-      decimalNull: 'decimal | null',
+      decimal: 'number',
+      decimalNull: 'number | null',
       number: 'number',
       numberNull: 'number | null',
       string: 'string'
     })
   }
 
+  getSwiftDataType(propName: string, value: string): string {
+    return this.matchResultDataType(propName, value, {
+      any: 'Any',
+      boolean: 'Bool',
+      booleanNull: 'boolean?',
+      date: 'Date',
+      dateNull: 'Date?',
+      decimal: 'Decimal',
+      decimalNull: 'Decimal?',
+      number: 'Int',
+      numberNull: 'Int?',
+      string: 'String'
+    })
+  }
+
   private matchResultDataType(propName: string, value: string, dateTypeNames: ResultDataType) {
+    value = value || ''
+    
     const isNULL = value === 'NULL'
     const isEmpty = value === ''
 
-    const isNumber = !isNaN(parseInt(value))
+    const isNumber = /\d+/g.test(value)
     const endsWithIdText = propName.toLowerCase().endsWith('id')
     const intWords = ['count', 'total']
     const hasIntText = intWords.some(intWord => propName.toLowerCase().includes(intWord))
 
-    const isDecimal = !isNaN(parseFloat(value))
-    const hasDot = propName.toLowerCase().includes('.')
+    const isDecimal = /^\d{1,10}(\.\d{1,8})?$/.test(value)
+    const hasDot = value.includes('.')
 
     const dateWords = ['date', 'modified']
     const hasDateText = dateWords.some(dateWord => propName.toLowerCase().includes(dateWord))
@@ -71,6 +75,10 @@ export class ResultTypeService {
     const hasBitText = bitWords.some(bitWord => propName.toLowerCase().includes(bitWord))
 
     switch (true) {
+      // decimal
+      case hasDot && isDecimal:
+        return dateTypeNames.decimal
+
       // int options
       case endsWithIdText && isNULL:
         return dateTypeNames.numberNull
@@ -79,9 +87,6 @@ export class ResultTypeService {
       case hasIntText && isNumber:
         return dateTypeNames.number
 
-      // decimal
-      case hasDot && isDecimal:
-        return dateTypeNames.number
 
       // date options
       case hasDateText && date instanceof Date && !isNaN(date.valueOf()):

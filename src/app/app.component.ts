@@ -1,25 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import * as camelcase from 'camelcase';
+import { ObjectTypes, SqlTypes } from './models/enums';
+import { SQL2ObjectFormData } from './models/object.model';
 import { ResultTypeService } from './services/result-type.service';
 import { StoreProcedureTypeService } from './services/store-procedure-type.service';
-
-export interface SQL2ObjectFormData {
-  sqlType: string
-  objectType: string
-  sqlTextData: string
-  isLowerCamelCase: boolean
-}
-
-export enum SqlTypes {
-  Result = 'Result',
-  StoredProcedure = 'Stored Procedure'
-}
-
-export enum ObjectTypes {
-  CSharp = 'C#',
-  TypeScript = 'TypeScript'
-}
 
 @Component({
   selector: 'app-root',
@@ -35,7 +20,8 @@ export class AppComponent implements OnInit {
 
   objectTypes: string[] = [
     'C#',
-    'TypeScript'
+    'TypeScript',
+    'Swift'
   ]
 
   form: FormGroup = new FormGroup({})
@@ -109,6 +95,8 @@ export class AppComponent implements OnInit {
         return this.resultTypeService.getCSharpDataType(propName, value)
       case ObjectTypes.TypeScript:
         return this.resultTypeService.getTypeScriptDataType(propName, value)
+      case ObjectTypes.Swift:
+        return this.resultTypeService.getSwiftDataType(propName, value)
       default:
         return ''
     }
@@ -120,6 +108,8 @@ export class AppComponent implements OnInit {
         return this.storedProcedureTypeService.getCSharpDataType(value)
       case ObjectTypes.TypeScript:
         return this.storedProcedureTypeService.getTypeScriptDataType(value)
+      case ObjectTypes.Swift:
+        return this.storedProcedureTypeService.getSwiftDataType(value)
       default:
         return ''
     }
@@ -133,24 +123,4 @@ export class AppComponent implements OnInit {
       console.error('Async: Could not copy text: ', err);
     });
   }
-}
-
-
-export interface Model {
-
-  customerId: number
-  countryId: number
-  guid: number
-  firstName: string
-  lastName: string
-  companyName: any
-  address1: string
-  address2: string
-  address3: string
-  city: string
-  postCode: string
-  country: any
-  contactNumber1: string
-  contactNumber2: string
-  emailAddress: any
 }
