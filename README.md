@@ -23,7 +23,7 @@ This project was created to prevent developers having to type entire classes fro
 * Select an `Object Type`
 * Click `Generate object`
 
-Example - you can copy and paste this into the app
+Example - you can copy and paste this into the app\
 `@FieldId int,`\
 `@Active bit,`\
 `@Username nvarchar(255),`
