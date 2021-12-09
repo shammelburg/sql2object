@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import * as camelcase from 'camelcase';
 import { ObjectTypes, SqlTypes } from './models/enums';
 import { SQL2ObjectFormData } from './models/object.model';
@@ -32,9 +33,11 @@ export class AppComponent implements OnInit {
     private fb: FormBuilder,
     private resultTypeService: ResultTypeService,
     private storedProcedureTypeService: StoreProcedureTypeService,
+    private title: Title
   ) { }
 
   ngOnInit() {
+    this.title.setTitle('SQL2Object')
     this.form = this.fb.group({
       sqlType: [SqlTypes.Result, Validators.required],
       objectType: ['C#', Validators.required],
@@ -45,8 +48,6 @@ export class AppComponent implements OnInit {
 
   generateObject() {
     const form: SQL2ObjectFormData = this.form.value
-
-
     const rows = form.sqlTextData.split('\n')
 
     switch (form.sqlType) {
