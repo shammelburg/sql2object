@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.title.setTitle('SQL2Object')
+    this.title.setTitle('sql2object | A developer tool')
     this.form = this.fb.group({
       sqlType: [SqlTypes.Result, Validators.required],
       objectType: ['C#', Validators.required],
