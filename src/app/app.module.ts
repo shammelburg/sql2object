@@ -7,6 +7,8 @@ import { CsharpCodeComponent } from './shared/csharp-code/csharp-code.component'
 import { TypescriptCodeComponent } from './shared/typescript-code/typescript-code.component';
 import { GithubCornerComponent } from './shared/github-corner/github-corner.component';
 import { SwiftCodeComponent } from './shared/swift-code/swift-code.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
+import { NotifierModule } from 'angular-notifier';
 
 @NgModule({
   declarations: [
@@ -14,11 +16,24 @@ import { SwiftCodeComponent } from './shared/swift-code/swift-code.component';
     CsharpCodeComponent,
     TypescriptCodeComponent,
     GithubCornerComponent,
-    SwiftCodeComponent
+    SwiftCodeComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NotifierModule.withConfig({
+      position: {
+        horizontal:{
+          position: 'middle',
+          distance: 20
+        },
+        vertical: {
+          distance: 20,
+          position:'top'
+        }
+      }
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

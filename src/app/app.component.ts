@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import * as camelcase from 'camelcase';
 import { ObjectTypes, SqlTypes } from './models/enums';
 import { SQL2ObjectFormData } from './models/object.model';
+import { NotifyService } from './services/notify.service';
 import { ResultTypeService } from './services/result-type.service';
 import { StoreProcedureTypeService } from './services/store-procedure-type.service';
 
@@ -26,14 +27,14 @@ export class AppComponent implements OnInit {
   ]
 
   form: FormGroup = new FormGroup({})
-
   generatedObject = new FormControl({ objectType: null, content: null })
 
   constructor(
     private fb: FormBuilder,
     private resultTypeService: ResultTypeService,
     private storedProcedureTypeService: StoreProcedureTypeService,
-    private title: Title
+    private title: Title,
+    private notify: NotifyService
   ) { }
 
   ngOnInit() {
@@ -46,43 +47,58 @@ export class AppComponent implements OnInit {
     })
   }
 
-  generateObject() {
+  processSqlData() {
     const form: SQL2ObjectFormData = this.form.value
     const rows = form.sqlTextData.split('\n')
 
     switch (form.sqlType) {
       case SqlTypes.Result:
-        const rowsWithProps = rows.map(r => r.split('\t'))
+        try {
+          const rowsWithProps = rows.map(r => r.split('\t'))
 
-        const propNames = rowsWithProps[0]
-        const propValues = rowsWithProps[1]
+          const propNames = rowsWithProps[0]
+          const propValues = rowsWithProps[1]
 
-        const propsWithDataTypes = propNames.map((propName, index) => ({
-          propName: form.isLowerCamelCase ? this.convertToLowerCamelCase(propName) : propName,
-          propDataType: this.getResultDataType(form.objectType, propName, propValues[index])
-        }))
+          const propsWithDataTypes = propNames.map((propName, index) => ({
+            propName: form.isLowerCamelCase ? this.convertToLowerCamelCase(propName) : propName,
+            propDataType: this.getResultDataType(form.objectType, propName, propValues[index])
+          }))
 
-        this.generatedObject.setValue({ objectType: form.objectType, content: propsWithDataTypes })
-        break;
+          this.generatedObject.setValue({ objectType: form.objectType, content: propsWithDataTypes })
+          this.notify.thankYouMessage()
+          break
+        } catch (error) {
+          console.error('**SQL Type = Result**', error)
+          this.notify.sqlTypeMessage('Result')
+          break
+        }
       case SqlTypes.StoredProcedure:
-        const mappedParameters = rows.map(r => {
-          const splitParameter = r.split(' ')
-          const removedEmptySpaces = splitParameter.filter(p => p)
-          return {
-            parameterName: removedEmptySpaces[0].replace('@', '').trim(),
-            parameterDataType: removedEmptySpaces[1]
-          }
-        })
+        try {
+          const mappedParameters = rows.map(r => {
+            const splitParameter = r.split(' ')
+            // removes empty spaces
+            const removedEmptySpaces = splitParameter.filter(p => p)
+            return {
+              parameterName: removedEmptySpaces[0].replace('@', '').trim(),
+              parameterDataType: removedEmptySpaces[1]
+            }
+          })
 
-        const parametersWithDataTypes = mappedParameters.map(parameter => ({
-          propName: form.isLowerCamelCase ? this.convertToLowerCamelCase(parameter.parameterName) : parameter.parameterName,
-          propDataType: this.getStoreProcedureDataType(form.objectType, parameter.parameterDataType)
-        }))
+          const parametersWithDataTypes = mappedParameters.map(parameter => ({
+            propName: form.isLowerCamelCase ? this.convertToLowerCamelCase(parameter.parameterName) : parameter.parameterName,
+            propDataType: this.getStoreProcedureDataType(form.objectType, parameter.parameterDataType)
+          }))
 
-        this.generatedObject.setValue({ objectType: form.objectType, content: parametersWithDataTypes })
-        break;
+          this.generatedObject.setValue({ objectType: form.objectType, content: parametersWithDataTypes })
+          this.notify.thankYouMessage()
+          break;
+        } catch (error) {
+          console.error('**SQL Type = Stored Procedure**', error)
+          this.notify.sqlTypeMessage('Stored Procedure')
+          break
+        }
       default:
-        this.generatedObject.setValue(form.sqlTextData)
+        this.generatedObject.setValue({ objectType: null, content: null })
     }
   }
 
