@@ -9,6 +9,9 @@ import { GithubCornerComponent } from './shared/github-corner/github-corner.comp
 import { SwiftCodeComponent } from './shared/swift-code/swift-code.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { NotifierModule } from 'angular-notifier';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { BuildUpdateComponent } from './shared/build-update/build-update.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,8 @@ import { NotifierModule } from 'angular-notifier';
     TypescriptCodeComponent,
     GithubCornerComponent,
     SwiftCodeComponent,
-    NavbarComponent
+    NavbarComponent,
+    BuildUpdateComponent
   ],
   imports: [
     BrowserModule,
@@ -33,6 +37,12 @@ import { NotifierModule } from 'angular-notifier';
           position:'top'
         }
       }
+    }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
     })
   ],
   providers: [],
