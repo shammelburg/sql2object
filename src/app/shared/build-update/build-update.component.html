@@ -1,0 +1,28 @@
+<ng-container *ngIf="updateDetected$ | async as updateDetected">
+    <div class="update-wrapper">
+        <div class="toast-container position-absolute p-3 top-0 start-50 translate-middle-x">
+            <div class="toast show update">
+                <div class="toast-header">
+                    <strong class="me-auto">{{appName}}</strong>
+                </div>
+                <div class="toast-body text-center">
+                    <span *ngIf="updateDetected.versionDetected">
+                        A new app version has been detected
+                    </span>
+                    <span *ngIf="updateDetected.versionReady">
+                        A new app version is ready
+                        <br>
+                        <button class="btn btn-sm btn-primary mt-2" (click)="reloadPage()">
+                            Apply update
+                        </button>
+                    </span>
+                    <span *ngIf="updateDetected.versionInstallationFailed">
+                        App installation failed
+                        <br>
+                        Please refresh the page manually
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
