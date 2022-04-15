@@ -2,7 +2,7 @@
   "name": "SQL2Object",
   "short_name": "SQL2Object",
   "description": "Generate C# / TypeScript / Swift objects from SQL data or scripts.",
-  "theme_color": "#0d6efd",
+  "theme_color": "#1976d2",
   "background_color": "#fff",
   "display": "standalone",
   "scope": "./",
