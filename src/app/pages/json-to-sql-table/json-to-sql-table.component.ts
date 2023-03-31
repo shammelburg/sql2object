@@ -31,7 +31,20 @@ export class JsonToSqlTableComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle('JSON 2 SQL Table | sql2object | A developer tool')
     this.form = this.fb.group({
-      jsonData: ['{"firstName": "sander"}', Validators.required],
+      jsonData: [`{
+        "Id": 1,
+        "FirstName": "Angular",
+        "LastName": "App",
+        "IsFramework": true,
+        "Created": "2023-03-31T15:00:00",
+        "Address": {
+             "Line1": "Scope Block",
+             "Line2": "JavaScript Lane",
+             "PostalCode": "ES6 2023"
+        }
+}
+            
+      `, Validators.required],
       nulls: [false]
     })
   }
@@ -107,10 +120,8 @@ export class JsonToSqlTableComponent implements OnInit {
     const isNULL = value === 'NULL'
     const isEmpty = value === ''
 
-    const isNumber = /\d+/g.test(value)
+    const isNumber = /^[0-9]+$/g.test(value)
     const endsWithIdText = propName.toLowerCase().endsWith('id')
-    const intWords = ['count', 'total']
-    const hasIntText = intWords.some(intWord => propName.toLowerCase().includes(intWord))
 
     const isDecimal = /^[-+]?[0-9]+\.[0-9]+$/.test(value)
     const hasDot = value.toString().includes('.')
@@ -120,6 +131,10 @@ export class JsonToSqlTableComponent implements OnInit {
     const date = new Date(value)
 
     switch (true) {
+      // bit        
+      case dataType === 'boolean':
+        return 'bit'
+
       // date options        
       case hasDateText && date instanceof Date && !isNaN(date.valueOf()):
         return 'datetime'
@@ -139,14 +154,8 @@ export class JsonToSqlTableComponent implements OnInit {
         return 'int'
       case endsWithIdText && isNumber:
         return 'int'
-      case hasIntText && isNumber:
-        return 'int'
       case isNumber:
         return 'int'
-
-      // bit        
-      case dataType === 'boolean':
-        return 'bit'
 
       // uanble to define data type from value
       case isNULL:
