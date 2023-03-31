@@ -3,105 +3,18 @@
 <app-navbar></app-navbar>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-12 text-center">
-      <h5>SQL 2 Object</h5>
-      <div class="pb-5">
-        Generate C# / TypeScript / Swift objects from SQL data or scripts.
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-body">
-          <h5 class="card-title mb-4">Select Object Requirements</h5>
-          <form [formGroup]="form">
-            <div class="row mb-3">
-              <label for="sql-type" class="col-sm-2 col-form-label">SQL Type</label>
-              <div class="col-sm-4">
-                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                  formControlName="sqlType">
-                  <option value="">Select...</option>
-                  <option [value]="type" *ngFor="let type of sqlTypes">{{type}}</option>
-                </select>
-              </div>
-              <label for="sql-type" class="col-sm-2 col-form-label">Object Type</label>
-              <div class="col-sm-4">
-                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                  formControlName="objectType">
-                  <option value="">Select...</option>
-                  <option [value]="type" *ngFor="let type of objectTypes">{{type}}</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-sm-12">
-                <div class="form-floating">
-                  <textarea class="form-control" placeholder="Copy and paste your SQL selection here..."
-                    id="floatingTextarea2" formControlName="sqlTextData" style="height: 400px"></textarea>
-                  <label for="floatingTextarea2">Paste your SQL data here...</label>
-                </div>
-                <div class="form-check form-switch mt-2">
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
-                    formControlName="isLowerCamelCase">
-                  <label class="form-check-label" for="flexSwitchCheckChecked">lowerCamelCase</label>
-                </div>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-sm-4"></div>
-              <div class="col-sm-4 text-center">
-                <button type="button" class="btn btn-primary btn-sm" id="process-button" (click)="processSqlData()"
-                  [disabled]="form.invalid">
-                  <i class="fas fa-play"></i> Generate object
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="card-body text-center">
-          <p>
-            sql2object is a useful tool for quickly creating ojects from your SQL data (result set) or scripts.
-          </p>
-          <p>
-            A real time saver, no need to write all your property names & types.
-          </p>
-          <p class="mt-3">
-            Data submitted into the app is not stored.
-          </p>
-        </div>
-      </div>
-
-
-    </div>
-    <div class="col-md-6" *ngIf="generatedObject.value?.content != null">
-      <div class="card shadow">
-        <div class="card-body">
-          <h5 class="card-title mb-4">
-            Your [{{generatedObject.value?.objectType}}] Result
-          </h5>
-          <span id="copy-content">
-            <app-csharp-code *ngIf="generatedObject.value?.objectType === 'C#'"
-              [props]="generatedObject.value?.content">
-            </app-csharp-code>
-            <app-typescript-code *ngIf="generatedObject.value?.objectType === 'TypeScript'"
-              [props]="generatedObject.value?.content">
-            </app-typescript-code>
-            <app-swift-code *ngIf="generatedObject.value?.objectType === 'Swift'"
-              [props]="generatedObject.value?.content">
-            </app-swift-code>
-          </span>
-        </div>
-        <div class="card-footer">
-          <button class="btn btn-sm btn-primary me-3" (click)="copyObject()">
-            <i class="far fa-copy"></i> Copy object
-          </button>
-          <button class="btn btn-sm btn-light" (click)="generatedObject.setValue({content: null, objectType: null})">
-            <i class="fas fa-times"></i> Close
-          </button>
-        </div>
-      </div>
+  <router-outlet></router-outlet>
+  <div class="row mt-5">
+    <div class="card-body text-center">
+      <p>
+        sql2object is a useful tool for quickly creating ojects from your SQL data (result set) or scripts.
+      </p>
+      <p>
+        A real time saver, no need to write all your property names & types.
+      </p>
+      <p class="mt-3">
+        Data submitted into the app is not stored.
+      </p>
     </div>
   </div>
 </div>

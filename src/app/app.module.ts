@@ -12,6 +12,7 @@ import { NotifierModule } from 'angular-notifier';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { BuildUpdateComponent } from './shared/build-update/build-update.component';
+import { AppRoutingModule, routedComponents } from './app-routing-module';
 
 @NgModule({
   declarations: [
@@ -21,11 +22,13 @@ import { BuildUpdateComponent } from './shared/build-update/build-update.compone
     GithubCornerComponent,
     SwiftCodeComponent,
     NavbarComponent,
-    BuildUpdateComponent
+    BuildUpdateComponent,
+    routedComponents
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
+    AppRoutingModule,
     NotifierModule.withConfig({
       position: {
         horizontal:{
