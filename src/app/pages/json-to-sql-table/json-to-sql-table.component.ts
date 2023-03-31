@@ -86,8 +86,6 @@ export class JsonToSqlTableComponent implements OnInit {
       })
     });
 
-    console.log('this.form.value.nulls', this.form.value.nulls)
-
     const mappedTableColumns = tableColumns.map(column => ({ ...column, null: this.form.value.nulls ? true : column.null }))
 
     console.table(mappedTableColumns)
@@ -101,8 +99,6 @@ export class JsonToSqlTableComponent implements OnInit {
     // console.log(createSqlTable.join('\n'))
 
     this.generatedObject.setValue({ content: mappedTableColumns })
-
-
   }
 
   convertToSqlDataType(propName: string, value: any, dataType: string) {
