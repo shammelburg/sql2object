@@ -16,6 +16,8 @@ import { StoreProcedureTypeService } from 'src/app/services/store-procedure-type
 })
 export class SqlToObjectComponent implements OnInit {
 
+  spExample: boolean = false
+
   sqlTypes: string[] = [
     'Result',
     'Stored Procedure'

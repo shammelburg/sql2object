@@ -1,90 +1,109 @@
 <div class="row">
-    <div class="col-lg-12 text-center">
-      <h5>SQL 2 Object</h5>
-      <div class="pb-5">
-        Generate C# / TypeScript / Swift objects from SQL data or scripts.
+  <div class="col-lg-12 text-center">
+    <h5>SQL 2 Object</h5>
+    <div class="pb-5">
+      Generate C# / TypeScript / Swift objects from SQL data or scripts.
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow">
+      <div class="card-body">
+        <h5 class="card-title mb-4">Select Object Requirements</h5>
+        <form [formGroup]="form">
+          <div class="row mb-3">
+            <label for="sql-type" class="col-sm-2 col-form-label">SQL Type</label>
+            <div class="col-sm-4">
+              <select class="form-select form-select-sm" aria-label=".form-select-sm example" formControlName="sqlType">
+                <option value="">Select...</option>
+                <option [value]="type" *ngFor="let type of sqlTypes">{{type}}</option>
+              </select>
+            </div>
+            <label for="sql-type" class="col-sm-2 col-form-label">Object Type</label>
+            <div class="col-sm-4">
+              <select class="form-select form-select-sm" aria-label=".form-select-sm example"
+                formControlName="objectType">
+                <option value="">Select...</option>
+                <option [value]="type" *ngFor="let type of objectTypes">{{type}}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <div class="alert alert-warning" *ngIf="form.value.sqlType">
+                <div *ngIf="form.value.sqlType === 'Result'">
+                  <i class="fas fa-info-circle"></i> In your Results tab, select a row with the least amount of NULL
+                  values, right-click and select
+                  <strong>Copy with Headers</strong>.
+                  Paste the data below.
+                </div>
+                <div *ngIf="form.value.sqlType === 'Stored Procedure'">
+                  <i class="fas fa-info-circle"></i> Copy the SP parameter name and data types and paste them below.
+                  <span class="btn btn-sm btn-link" (click)="spExample = !spExample">
+                    {{spExample ? 'Hide' : 'Show'}} example
+                  </span>
+                  <div class="mt-2" *ngIf="spExample">
+                    <pre>
+@Id int,
+@name nvarchar(100),
+@isActive bit
+</pre>
+                  </div>
+                </div>
+              </div>
+              <div class="form-floating">
+                <textarea class="form-control" placeholder="Copy and paste your SQL selection here..."
+                  id="floatingTextarea2" formControlName="sqlTextData" style="height: 400px"></textarea>
+                <label for="floatingTextarea2">Paste your SQL data here...</label>
+              </div>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
+                  formControlName="isLowerCamelCase">
+                <label class="form-check-label" for="flexSwitchCheckChecked">lowerCamelCase</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 text-center">
+              <button type="button" class="btn btn-primary btn-sm" id="process-button" (click)="processSqlData()"
+                [disabled]="form.invalid">
+                <i class="fas fa-play"></i> Generate object
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
-    <div class="col-lg-6">
-      <div class="card shadow">
-        <div class="card-body">
-          <h5 class="card-title mb-4">Select Object Requirements</h5>
-          <form [formGroup]="form">
-            <div class="row mb-3">
-              <label for="sql-type" class="col-sm-2 col-form-label">SQL Type</label>
-              <div class="col-sm-4">
-                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                  formControlName="sqlType">
-                  <option value="">Select...</option>
-                  <option [value]="type" *ngFor="let type of sqlTypes">{{type}}</option>
-                </select>
-              </div>
-              <label for="sql-type" class="col-sm-2 col-form-label">Object Type</label>
-              <div class="col-sm-4">
-                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                  formControlName="objectType">
-                  <option value="">Select...</option>
-                  <option [value]="type" *ngFor="let type of objectTypes">{{type}}</option>
-                </select>
-              </div>
-            </div>
 
-            <div class="row mb-3">
-              <div class="col-sm-12">
-                <div class="form-floating">
-                  <textarea class="form-control" placeholder="Copy and paste your SQL selection here..."
-                    id="floatingTextarea2" formControlName="sqlTextData" style="height: 400px"></textarea>
-                  <label for="floatingTextarea2">Paste your SQL data here...</label>
-                </div>
-                <div class="form-check form-switch mt-2">
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
-                    formControlName="isLowerCamelCase">
-                  <label class="form-check-label" for="flexSwitchCheckChecked">lowerCamelCase</label>
-                </div>
-              </div>
-            </div>
 
-            <div class="row mb-3">
-              <div class="col-sm-4"></div>
-              <div class="col-sm-4 text-center">
-                <button type="button" class="btn btn-primary btn-sm" id="process-button" (click)="processSqlData()"
-                  [disabled]="form.invalid">
-                  <i class="fas fa-play"></i> Generate object
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+  </div>
+  <div class="col-lg-6" *ngIf="generatedObject.value?.content != null">
+    <div class="card shadow">
+      <div class="card-body">
+        <h5 class="card-title mb-4">
+          Your [{{generatedObject.value?.objectType}}] Result
+        </h5>
+        <span id="copy-content">
+          <app-csharp-code *ngIf="generatedObject.value?.objectType === 'C#'" [props]="generatedObject.value?.content">
+          </app-csharp-code>
+          <app-typescript-code *ngIf="generatedObject.value?.objectType === 'TypeScript'"
+            [props]="generatedObject.value?.content">
+          </app-typescript-code>
+          <app-swift-code *ngIf="generatedObject.value?.objectType === 'Swift'"
+            [props]="generatedObject.value?.content">
+          </app-swift-code>
+        </span>
       </div>
-
-
-    </div>
-    <div class="col-lg-6" *ngIf="generatedObject.value?.content != null">
-      <div class="card shadow">
-        <div class="card-body">
-          <h5 class="card-title mb-4">
-            Your [{{generatedObject.value?.objectType}}] Result
-          </h5>
-          <span id="copy-content">
-            <app-csharp-code *ngIf="generatedObject.value?.objectType === 'C#'"
-              [props]="generatedObject.value?.content">
-            </app-csharp-code>
-            <app-typescript-code *ngIf="generatedObject.value?.objectType === 'TypeScript'"
-              [props]="generatedObject.value?.content">
-            </app-typescript-code>
-            <app-swift-code *ngIf="generatedObject.value?.objectType === 'Swift'"
-              [props]="generatedObject.value?.content">
-            </app-swift-code>
-          </span>
-        </div>
-        <div class="card-footer">
-          <button class="btn btn-sm btn-primary me-3" (click)="copyObject()">
-            <i class="far fa-copy"></i> Copy object
-          </button>
-          <button class="btn btn-sm btn-light" (click)="generatedObject.setValue({content: null, objectType: null})">
-            <i class="fas fa-times"></i> Close
-          </button>
-        </div>
+      <div class="card-footer">
+        <button class="btn btn-sm btn-primary me-3" (click)="copyObject()">
+          <i class="far fa-copy"></i> Copy object
+        </button>
+        <button class="btn btn-sm btn-light" (click)="generatedObject.setValue({content: null, objectType: null})">
+          <i class="fas fa-times"></i> Close
+        </button>
       </div>
     </div>
   </div>
+</div>
